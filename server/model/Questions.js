@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize")
 const db = require("../database")
 
-const Friend = db.define(
+const Questions = db.define(
   "questions",//数据库的表名
   {
     //设置表的属性
@@ -11,8 +11,9 @@ const Friend = db.define(
       notNull: true,
       autoIncrement: true
     },
-    positionType: DataTypes.STRING,
-    questionNum: DataTypes.INTEGER,
+    careerField: DataTypes.STRING,
+    careerAdvantages: DataTypes.STRING,
+    competency: DataTypes.STRING,
     quesData: DataTypes.JSON,
   },
   {
@@ -22,4 +23,4 @@ const Friend = db.define(
   }
 )
 
-module.exports = Friend
+module.exports = Questions
