@@ -3,7 +3,7 @@ const {
   default: to
 } = require("await-to-js")
 const router = new Router
-const questionnireModel = require("../model/Questions");
+const questionnaireModel = require("../model/Questions");
 const { checkExistingField, handleResult, shuffleArray } = require("../utils");
 
 router.post('/add', async ctx => {
@@ -13,8 +13,8 @@ router.post('/add', async ctx => {
   const careerAdvantages = positionType[1]
   const competency = positionType[2]
   const quesData = data.quesData
-  if (await checkExistingField(questionnireModel, 'competency', competency)) {
-    const res = await questionnireModel.update({ careerField, careerAdvantages, quesData, }, {
+  if (await checkExistingField(questionnaireModel, 'competency', competency)) {
+    const res = await questionnaireModel.update({ careerField, careerAdvantages, quesData, }, {
       where: {
         competency
       },
@@ -27,7 +27,7 @@ router.post('/add', async ctx => {
   }
 
   const [err, newQues] = await to(
-    questionnireModel.create({
+    questionnaireModel.create({
       careerField,
       careerAdvantages,
       competency,
@@ -39,7 +39,7 @@ router.post('/add', async ctx => {
 })
 
 router.post('/get', async ctx => {
-  const allQuestionnaires = await questionnireModel.findAll({
+  const allQuestionnaires = await questionnaireModel.findAll({
     raw: true
   });
   const arr = []
@@ -62,4 +62,5 @@ router.post('/get', async ctx => {
   }
   ctx.suc("查询成功", res)
 })
-module.exports = router.routes()
+
+module.exports = router.routes() 
