@@ -47,7 +47,6 @@ router.get("/getUserInfo", ctx => {
 })
 
 router.post("/register", async ctx => {
-    // 从请求体中获取用户数据
     let data = ctx.request.body;
 
     if (data.email === '20478048816@qq.com') {
@@ -57,16 +56,12 @@ router.post("/register", async ctx => {
     }
     const avatar = await getImgUrl()
     data.avatar = avatar
-    // 使用jsonwebtoken对用户数据进行签名，生成token
     const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
 
-    // 校验邮箱
     if (await checkExistingUser('email', data.email)) {
         ctx.err("该邮箱已经被注册!");
         return;
     }
-
-    // 校验用户名
     if (await checkExistingUser('name', data.name)) {
         ctx.err("该用户名已经被注册!");
         return;
@@ -82,8 +77,6 @@ router.post("/register", async ctx => {
         })
     );
     newUser.dataValues.token = token
-    console.log(newUser, 'newUser')
-    // 根据操作结果返回成功或失败的信息
     if (err) {
         ctx.err("添加失败", err);
         console.log('err', err);
@@ -167,6 +160,58 @@ router.post("/getAllUsers", async ctx => {
     } else {
         ctx.suc("查找用户数量成功!", { totalNum: allUsers.length, curMonthNum: length })
     }
+})
+
+router.post("/relaxAssessment", async ctx => {
+    const data = ctx.request.body;
+    const { email, firstWenJuanAnswer, secondWenJuanQuestion } = data
+    const [err, user] = await to(
+        userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion }, {
+            where: {
+                email,
+            },
+            raw: true
+        })
+    )
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("修改密码成功!", { success: true })
+})
+
+router.post("/getSecondWenjuan", async ctx => {
+    const data = ctx.request.body;
+    const { email } = data
+    const [err, user] = await to(
+        userModel.findAll({
+            where: {
+                email
+            },
+            raw: true
+        })
+    )
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    const { firstWenJuanAnswer, hasUnFinish, secondWenJuanQuestion } = user[0]
+    ctx.suc("获取第二份问卷成功！", { hasUnFinish: !!hasUnFinish, firstWenJuanAnswer, secondWenJuanQuestion })
+})
+
+router.post("/clearSecondWenjuan", async ctx => {
+    const data = ctx.request.body;
+    const { email } = data
+    const [err, user] = await to(
+        userModel.update({ hasUnFinish: false, firstWenJuanAnswer: '', secondWenJuanQuestion: '' }, {
+            where: {
+                email,
+            },
+            raw: true
+        })
+    )
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("情况第二份问卷成功！", { success: true })
 })
 
 module.exports = router.routes()

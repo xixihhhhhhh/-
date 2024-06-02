@@ -4,7 +4,7 @@ const {
 } = require("await-to-js")
 const router = new Router
 const questionnaireModel = require("../model/Questions");
-const { checkExistingField, handleResult, shuffleArray } = require("../utils");
+const { checkExistingField, handleResult, randomArray } = require("../utils");
 
 router.post('/add', async ctx => {
   let data = ctx.request.body
@@ -52,13 +52,30 @@ router.post('/get', async ctx => {
       })
     }
   })
-  const questionTypeOne = shuffleArray(arr.filter(item => item.quesData.questionType === 'typeOne'))
-  const questionTypeTwo = shuffleArray(arr.filter(item => item.quesData.questionType === 'typeTwo'))
-  const questionTypeThree = shuffleArray(arr.filter(item => item.quesData.questionType === 'typeThree'))
-  const res = {
+  const questionTypeOne = randomArray(arr.filter(item => item.quesData.questionType === 'typeOne'))
+  const questionTypeTwo = randomArray(arr.filter(item => item.quesData.questionType === 'typeTwo'))
+  let questionTypeThree = randomArray(arr.filter(item => item.quesData.questionType === 'typeThree'))
+  const repeatCompetency = ['teamwork', 'plan', 'norms']
+  questionTypeThree = questionTypeThree.filter(item => {
+    if (item.quesData.isRepeat && repeatCompetency.includes(item.competency)) {
+      return
+    }
+    return item
+  })
+  const firstWenJuan = {
     questionTypeOne,
     questionTypeTwo,
-    questionTypeThree
+    questionTypeThree: questionTypeThree.slice(0, 48)
+  }
+  console.log(firstWenJuan.questionTypeOne.length)
+  console.log(firstWenJuan.questionTypeTwo.length)
+  console.log(firstWenJuan.questionTypeThree.length)
+  const secondWenJuan = {
+    questionTypeThree: questionTypeThree.slice(48)
+  }
+  const res = {
+    firstWenJuan,
+    secondWenJuan,
   }
   ctx.suc("查询成功", res)
 })

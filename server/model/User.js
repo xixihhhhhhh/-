@@ -17,6 +17,9 @@ const User = db.define(
         sex: DataTypes.BOOLEAN,
         roles: DataTypes.STRING,
         avatar: DataTypes.STRING,
+        hasUnFinish: DataTypes.BOOLEAN,
+        firstWenJuanAnswer: DataTypes.JSON,
+        secondWenJuanQuestion: DataTypes.JSON,
     },
     {
         timestamps: true,
