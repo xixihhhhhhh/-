@@ -67,9 +67,6 @@ router.post('/get', async ctx => {
     questionTypeTwo,
     questionTypeThree: questionTypeThree.slice(0, 48)
   }
-  console.log(firstWenJuan.questionTypeOne.length)
-  console.log(firstWenJuan.questionTypeTwo.length)
-  console.log(firstWenJuan.questionTypeThree.length)
   const secondWenJuan = {
     questionTypeThree: questionTypeThree.slice(48)
   }

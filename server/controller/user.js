@@ -49,7 +49,7 @@ router.get("/getUserInfo", ctx => {
 router.post("/register", async ctx => {
     let data = ctx.request.body;
 
-    if (data.email === '20478048816@qq.com') {
+    if (data.email === '2078048816@qq.com') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
@@ -88,7 +88,7 @@ router.post("/register", async ctx => {
 
 router.post("/login", async ctx => {
     let data = ctx.request.body
-    if (data.email === '20478048816@qq.com') {
+    if (data.email === '2078048816@qq.com') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
@@ -101,7 +101,8 @@ router.post("/login", async ctx => {
             raw: true
         })
     )
-    if (err) {
+    const len = newUser.length
+    if (!len) {
         ctx.err("登录失败", err)
         console.log('err', err)
         return
@@ -117,6 +118,10 @@ router.post("/login", async ctx => {
             ctx.err("密码错误！", err)
         }
     }
+})
+
+router.post("/logout", async ctx => {
+    ctx.suc("注销成功!")
 })
 
 router.post("/resetPassword", async ctx => {
