@@ -49,7 +49,7 @@ router.get("/getUserInfo", ctx => {
 router.post("/register", async ctx => {
     let data = ctx.request.body;
 
-    if (data.email === '2078048816@qq.com') {
+    if (data.email === '20478048816@qq.com') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
@@ -88,7 +88,7 @@ router.post("/register", async ctx => {
 
 router.post("/login", async ctx => {
     let data = ctx.request.body
-    if (data.email === '2078048816@qq.com') {
+    if (data.email === '20478048816@qq.com') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
