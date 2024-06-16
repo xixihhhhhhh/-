@@ -108,8 +108,8 @@ router.post("/login", async ctx => {
         return
     } else {
         data = {
-            ...data,
-            ...newUser[0]
+            ...newUser[0],
+            ...data
         }
         const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
         if ((newUser[0].password + '') === (data.password + '')) {
