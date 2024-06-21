@@ -5,7 +5,6 @@ const config = {
     baseUrl: '',//配置的域名
     port: 3001,//api访问的端口
     tokenSecret: "CXH",//token的加密
-    wsPort: 3100,//WebSocket的端口号
 
     //数据库相关的配置
     db: {
