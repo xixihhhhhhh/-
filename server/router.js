@@ -5,9 +5,9 @@ const router = new Router()
 //用户获取token等路由
 router.use('/user', require("./controller/user"))
 router.use('/friend', require("./controller/friend"))
-router.use('/chat', require("./controller/chat"))
 router.use('/question', require("./controller/questions"))
 router.use('/comment', require("./controller/comment"))
 router.use('/evaluateLists', require("./controller/evaluateList"))
 
+router.use('', require("./controller/chat"))
 module.exports = router.routes()

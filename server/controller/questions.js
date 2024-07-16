@@ -57,7 +57,7 @@ router.post('/get', async ctx => {
   let questionTypeThree = randomArray(arr.filter(item => item.quesData.questionType === 'typeThree'))
   const repeatCompetency = ['teamwork', 'plan', 'norms']
   questionTypeThree = questionTypeThree.filter(item => {
-    if (item.quesData.isRepeat && repeatCompetency.includes(item.competency)) {
+    if (item.quesData.isRepeat && !repeatCompetency.includes(item.competency)) {
       return
     }
     return item

@@ -108,10 +108,11 @@ router.post("/login", async ctx => {
         return
     } else {
         data = {
-            ...newUser[0],
-            ...data
+          ...data,
+          name: newUser[0].name
         }
         const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
+        console.log("🚀 ~ token:", token)
         if ((newUser[0].password + '') === (data.password + '')) {
             ctx.suc("登录成功!", { ...data, token })
         } else {

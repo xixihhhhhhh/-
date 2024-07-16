@@ -6,7 +6,6 @@ const router = require("./server/router")
 const response = require("./server/middleware/response")
 const bodyParser = require('koa-bodyparser')
 const cors = require("koa2-cors")
-const http = require('http');
 app.use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', '*');
     ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
