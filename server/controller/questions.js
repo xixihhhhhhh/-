@@ -62,13 +62,14 @@ router.post('/get', async ctx => {
     }
     return item
   })
+  const AVARAGENUM = 52
   const firstWenJuan = {
     questionTypeOne,
     questionTypeTwo,
-    questionTypeThree: questionTypeThree.slice(0, 48)
+    questionTypeThree: questionTypeThree.slice(0, AVARAGENUM)
   }
   const secondWenJuan = {
-    questionTypeThree: questionTypeThree.slice(48)
+    questionTypeThree: questionTypeThree.slice(AVARAGENUM)
   }
   const res = {
     firstWenJuan,
