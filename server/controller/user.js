@@ -108,8 +108,8 @@ router.post("/login", async ctx => {
         return
     } else {
         data = {
-          ...data,
-          name: newUser[0].name
+            ...data,
+            name: newUser[0].name
         }
         const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
         console.log("🚀 ~ token:", token)
@@ -170,9 +170,9 @@ router.post("/getAllUsers", async ctx => {
 
 router.post("/relaxAssessment", async ctx => {
     const data = ctx.request.body;
-    const { email, firstWenJuanAnswer, secondWenJuanQuestion } = data
+    const { email, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc } = data
     const [err, user] = await to(
-        userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion }, {
+        userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc }, {
             where: {
                 email,
             },
@@ -182,7 +182,7 @@ router.post("/relaxAssessment", async ctx => {
     if (err) {
         ctx.err("添加失败", err);
     }
-    ctx.suc("修改密码成功!", { success: true })
+    ctx.suc("下次再继续成功!", { success: true })
 })
 
 router.post("/getSecondWenjuan", async ctx => {
@@ -199,15 +199,15 @@ router.post("/getSecondWenjuan", async ctx => {
     if (err) {
         ctx.err("添加失败", err);
     }
-    const { firstWenJuanAnswer, hasUnFinish, secondWenJuanQuestion } = user[0]
-    ctx.suc("获取第二份问卷成功！", { hasUnFinish: !!hasUnFinish, firstWenJuanAnswer, secondWenJuanQuestion })
+    const { firstWenJuanAnswer, hasUnFinish, secondWenJuanQuestion, corrFunc } = user[0]
+    ctx.suc("获取第二份问卷成功！", { hasUnFinish: !!hasUnFinish, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc })
 })
 
 router.post("/clearSecondWenjuan", async ctx => {
     const data = ctx.request.body;
     const { email } = data
     const [err, user] = await to(
-        userModel.update({ hasUnFinish: false, firstWenJuanAnswer: '', secondWenJuanQuestion: '' }, {
+        userModel.update({ hasUnFinish: false, firstWenJuanAnswer: [], secondWenJuanQuestion: [], corrFunc: '' }, {
             where: {
                 email,
             },

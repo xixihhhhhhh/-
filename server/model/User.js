@@ -20,6 +20,7 @@ const User = db.define(
         hasUnFinish: DataTypes.BOOLEAN,
         firstWenJuanAnswer: DataTypes.JSON,
         secondWenJuanQuestion: DataTypes.JSON,
+        corrFunc: DataTypes.STRING,
     },
     {
         timestamps: true,
