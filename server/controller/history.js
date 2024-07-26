@@ -17,44 +17,47 @@ router.post('/add', async ctx => {
   handleResult(ctx, err, "添加成功", { success: true })
 })
 
-router.post('/get', async ctx => {
-  const allQuestionnaires = await questionnaireModel.findAll({
-    raw: true
-  });
-  const arr = []
-  allQuestionnaires.forEach(item => {
-    const { quesData } = item
-    for (let i = 0; i < quesData.length; i++) {
-      arr.push({
-        ...item,
-        quesData: quesData[i]
-      })
+router.post('/getAllEvaluateHistory', async ctx => {
+  const data = ctx.request.body;
+  const filteredObj = Object.fromEntries(
+    Object.entries(data).filter(([key, value]) => value !== '')
+  );
+
+  // 构建过滤条件
+  let where = {};
+  if (filteredObj.department) {
+    where.department = filteredObj.department;
+  }
+  if (filteredObj.position) {
+    where.position = filteredObj.position;
+  }
+
+  // 使用过滤条件查询
+  const [err, allHistory] = await to(
+    HistoryModel.findAll({
+      where, // 使用过滤条件
+      raw: true
+    })
+  );
+
+  if (filteredObj.sortOrder !== '') {
+    if (filteredObj.sortOrder === '升序') {
+      allHistory.sort((a, b) => {
+        const dateA = new Date(a.finishTime);
+        const dateB = new Date(b.finishTime);
+        return dateA - dateB;
+      });
+    } else {
+      allHistory.sort((a, b) => {
+        const dateA = new Date(a.finishTime);
+        const dateB = new Date(b.finishTime);
+        return dateB - dateA;
+      });
     }
-  })
-  const questionTypeOne = randomArray(arr.filter(item => item.quesData.questionType === 'typeOne'))
-  const questionTypeTwo = randomArray(arr.filter(item => item.quesData.questionType === 'typeTwo'))
-  let questionTypeThree = randomArray(arr.filter(item => item.quesData.questionType === 'typeThree'))
-  const repeatCompetency = ['teamwork', 'plan', 'norms']
-  questionTypeThree = questionTypeThree.filter(item => {
-    if (item.quesData.isRepeat && !repeatCompetency.includes(item.competency)) {
-      return
-    }
-    return item
-  })
-  const AVARAGENUM = 52
-  const firstWenJuan = {
-    questionTypeOne,
-    questionTypeTwo,
-    questionTypeThree: questionTypeThree.slice(0, AVARAGENUM)
   }
-  const secondWenJuan = {
-    questionTypeThree: questionTypeThree.slice(AVARAGENUM)
-  }
-  const res = {
-    firstWenJuan,
-    secondWenJuan,
-  }
-  ctx.suc("查询成功", res)
-})
+
+  if (err) return ctx.err("操作失败", err);
+  ctx.suc("查询成功", allHistory);
+});
 
 module.exports = router.routes() 

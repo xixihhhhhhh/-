@@ -46,6 +46,20 @@ router.get("/getUserInfo", ctx => {
     });
 })
 
+router.post("/getUserInfoById", async ctx => {
+    const data = ctx.request.body
+    const [err, user] = await to(
+        userModel.findAll({
+            where: {
+                id: data.user_id
+            },
+            raw: true
+        })
+    )
+    if (err) return
+    ctx.suc("", user[0])
+})
+
 router.post("/register", async ctx => {
     let data = ctx.request.body;
 
@@ -109,10 +123,10 @@ router.post("/login", async ctx => {
     } else {
         data = {
             ...data,
+            userId: newUser[0].id,
             name: newUser[0].name
         }
         const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
-        console.log("🚀 ~ token:", token)
         if ((newUser[0].password + '') === (data.password + '')) {
             ctx.suc("登录成功!", { ...data, token })
         } else {

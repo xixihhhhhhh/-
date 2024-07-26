@@ -18,6 +18,10 @@ const chatFriend = db.define(
     position: DataTypes.STRING,
     finishTime: DataTypes.STRING,
     echartOptions: DataTypes.JSON,
+    competencyObj: DataTypes.JSON,
+    careerAdvantagesObj: DataTypes.JSON,
+    careerFieldObj: DataTypes.JSON,
+    corrFunc: DataTypes.STRING
   },
   {
     timestamps: true,

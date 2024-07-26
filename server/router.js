@@ -6,6 +6,6 @@ const router = new Router()
 router.use('/user', require("./controller/user"))
 router.use('/question', require("./controller/questions"))
 router.use('/comment', require("./controller/comment"))
-router.use('/history', require("./controller/history"))
+router.use('/evaluateHistory', require("./controller/history"))
 
 module.exports = router.routes()
