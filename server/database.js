@@ -22,7 +22,7 @@ module.exports = db = new Sequelize(
 )
 async function sync() {
     console.log("正在同步模型")
-    const [err, res] = await to(db.sync({ alter: true }))
+    const [err] = await to(db.sync({ alter: true }))
     if (err) {
         console.log(err)
     }

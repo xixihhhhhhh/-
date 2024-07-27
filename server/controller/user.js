@@ -16,11 +16,7 @@ async function checkExistingUser(field, value) {
         raw: true
     });
 
-    if (existingUser.length > 0) {
-        return true;
-    }
-
-    return false;
+    return existingUser.length > 0;
 }
 
 router.get("/getUserInfo", ctx => {
@@ -119,7 +115,6 @@ router.post("/login", async ctx => {
     if (!len) {
         ctx.err("登录失败", err)
         console.log('err', err)
-        return
     } else {
         data = {
             ...data,
@@ -152,7 +147,6 @@ router.post("/resetPassword", async ctx => {
     if (err) {
         ctx.err("修改密码失败", { success: false })
         console.log('err', err)
-        return
     } else {
         console.log(succ)
         if (succ[0] === 1) {
@@ -176,7 +170,6 @@ router.post("/getAllUsers", async ctx => {
     if (err) {
         ctx.err("查找用户失败", { success: false })
         console.log('err', err)
-        return
     } else {
         ctx.suc("查找用户数量成功!", { totalNum: allUsers.length, curMonthNum: length })
     }
@@ -185,7 +178,7 @@ router.post("/getAllUsers", async ctx => {
 router.post("/relaxAssessment", async ctx => {
     const data = ctx.request.body;
     const { email, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc } = data
-    const [err, user] = await to(
+    const [err] = await to(
         userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc }, {
             where: {
                 email,
@@ -220,7 +213,7 @@ router.post("/getSecondWenjuan", async ctx => {
 router.post("/clearSecondWenjuan", async ctx => {
     const data = ctx.request.body;
     const { email } = data
-    const [err, user] = await to(
+    const [err] = await to(
         userModel.update({ hasUnFinish: false, firstWenJuanAnswer: [], secondWenJuanQuestion: [], corrFunc: '' }, {
             where: {
                 email,

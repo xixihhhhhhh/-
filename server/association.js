@@ -1,6 +1,6 @@
 const fs = require('fs');
 const lib = fs.readdirSync(__dirname + '/model');
-var models = {}
+let models = {}
 for (let item of lib) {
     let model = item.replace('.js', '')
     models[model] = require('./model/' + item)

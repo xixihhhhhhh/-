@@ -4,12 +4,12 @@ const {
 } = require("await-to-js")
 const router = new Router
 const HistoryModel = require("../model/EvaluateHistory");
-const { checkExistingField, handleResult, randomArray } = require("../utils");
+const { handleResult } = require("../utils");
 
 router.post('/add', async ctx => {
   const data = ctx.request.body
 
-  const [err, newHistory] = await to(
+  const [err] = await to(
     HistoryModel.create({
       ...data
     })

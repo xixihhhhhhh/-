@@ -10,7 +10,7 @@ const { timeDifference } = require("../utils");
 router.post('/add', async ctx => {
   let data = ctx.request.body
   const { name, avatar, content } = data
-  const [err, newComment] = await to(
+  const [err] = await to(
     commentModel.create({
       name,
       avatar,

@@ -6,11 +6,7 @@ async function checkExistingField(model, field, value) {
     raw: true
   });
 
-  if (array.length > 0) {
-    return true;
-  }
-
-  return false;
+  return array.length > 0;
 }
 
 function handleResult(ctx, err, successMessage, successData) {

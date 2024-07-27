@@ -7,5 +7,6 @@ router.use('/user', require("./controller/user"))
 router.use('/question', require("./controller/questions"))
 router.use('/comment', require("./controller/comment"))
 router.use('/evaluateHistory', require("./controller/history"))
+router.use('/duty', require("./controller/duty"))
 
 module.exports = router.routes()

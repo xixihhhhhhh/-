@@ -26,7 +26,7 @@ router.post('/add', async ctx => {
     return;
   }
 
-  const [err, newQues] = await to(
+  const [err] = await to(
     questionnaireModel.create({
       careerField,
       careerAdvantages,
@@ -45,10 +45,10 @@ router.post('/get', async ctx => {
   const arr = []
   allQuestionnaires.forEach(item => {
     const { quesData } = item
-    for (let i = 0; i < quesData.length; i++) {
+    for (const element of quesData) {
       arr.push({
         ...item,
-        quesData: quesData[i]
+        quesData: element
       })
     }
   })
