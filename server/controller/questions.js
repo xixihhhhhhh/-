@@ -14,7 +14,7 @@ router.post('/add', async ctx => {
   const competency = positionType[2]
   const quesData = data.quesData
   if (await checkExistingField(questionnaireModel, 'competency', competency)) {
-    const res = await questionnaireModel.update({ careerField, careerAdvantages, quesData, }, {
+    const res = await questionnaireModel.update({ careerField, careerAdvantages, quesData }, {
       where: {
         competency
       },

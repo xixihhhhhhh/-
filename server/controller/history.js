@@ -3,14 +3,14 @@ const {
   default: to
 } = require("await-to-js")
 const router = new Router
-const HistoryModel = require("../model/EvaluateHistory");
+const historyModel = require("../model/EvaluateHistory");
 const { handleResult } = require("../utils");
 
 router.post('/add', async ctx => {
   const data = ctx.request.body
 
   const [err] = await to(
-    HistoryModel.create({
+    historyModel.create({
       ...data
     })
   );
@@ -34,7 +34,7 @@ router.post('/getAllEvaluateHistory', async ctx => {
 
   // 使用过滤条件查询
   const [err, allHistory] = await to(
-    HistoryModel.findAll({
+    historyModel.findAll({
       where, // 使用过滤条件
       raw: true
     })
@@ -79,7 +79,7 @@ router.post('/getPersonalEvaluateList', async ctx => {
 
   // 使用过滤条件查询
   const [err, allHistory] = await to(
-    HistoryModel.findAll({
+    historyModel.findAll({
       where, // 使用过滤条件
       raw: true
     })
