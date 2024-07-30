@@ -105,4 +105,24 @@ router.post('/getPersonalEvaluateList', async ctx => {
   ctx.suc("查询成功", allHistory);
 });
 
+router.post('/deleteEvaluate', async ctx => {
+  const data = ctx.request.body;
+
+  // 构建过滤条件
+  let where = {
+    id: data.id
+  };
+
+  // 使用过滤条件查询
+  const [err, allHistory] = await to(
+    historyModel.destroy({
+      where, // 使用过滤条件
+      raw: true
+    })
+  );
+
+  if (err) return ctx.err("操作失败", err);
+  ctx.suc("删除成功", { success: true });
+});
+
 module.exports = router.routes() 
