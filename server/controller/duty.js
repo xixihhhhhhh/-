@@ -124,30 +124,61 @@ router.post('/getEvaluteFormData', async ctx => {
   function convertDepartment(allDutys) {
     const result = {};
     for (const item of allDutys) {
-      if (result[item.department]) {
-        const obj = {
-          岗位名称: item.position,
-          对应职能: item.corrFunc
+      if (!item.subDepartment) {
+        if (result[item.department]) {
+          const obj = {
+            岗位名称: item.position,
+            对应职能: item.corrFunc
+          }
+          result[item.department].push({
+            label: item.position,
+            value: JSON.stringify(obj)
+          })
+        } else {
+          result[item.department] = []
+          const obj = {
+            岗位名称: item.position,
+            对应职能: item.corrFunc
+          }
+          result[item.department].push({
+            label: item.position,
+            value: JSON.stringify(obj)
+          })
         }
-        result[item.department].push({
-          label: item.position,
-          value: JSON.stringify(obj)
-        })
-      } else {
-        result[item.department] = []
-        const obj = {
-          岗位名称: item.position,
-          对应职能: item.corrFunc
-        }
-        result[item.department].push({
-          label: item.position,
-          value: JSON.stringify(obj)
-        })
       }
     }
     return result;
   }
   const departmentObj = convertDepartment(allDutys)
+  function getSubPosition(allDutys) {
+    const result = {};
+    for (const item of allDutys) {
+      if (item.subDepartment) {
+        if (result[item.department + item.subDepartment]) {
+          const obj = {
+            岗位名称: item.position,
+            对应职能: item.corrFunc
+          }
+          result[item.department + item.subDepartment].push({
+            label: item.position,
+            value: JSON.stringify(obj)
+          })
+        } else {
+          result[item.department + item.subDepartment] = []
+          const obj = {
+            岗位名称: item.position,
+            对应职能: item.corrFunc
+          }
+          result[item.department + item.subDepartment].push({
+            label: item.position,
+            value: JSON.stringify(obj)
+          })
+        }
+      }
+    }
+    return result;
+  }
+  const subPosition = getSubPosition(allDutys)
   function allDepartment(allDutys) {
     const departmentSet = new Set()
     for (let item of allDutys) {
@@ -160,7 +191,7 @@ router.post('/getEvaluteFormData', async ctx => {
     return departmentObjArr
   }
   const departmentObjArr = allDepartment(allDutys)
-  ctx.suc("查询成功", { subDepartmentObj, departmentObj, departmentObjArr });
+  ctx.suc("查询成功", { subDepartmentObj, departmentObj, departmentObjArr, subPosition });
 })
 
 module.exports = router.routes()
