@@ -92,4 +92,75 @@ router.post('/getAllDepartmentAndPosition', async ctx => {
   ctx.suc("查询成功", { allDepartment: departmentObj, allPosition: positionObj });
 })
 
+router.post('/getEvaluteFormData', async ctx => {
+  const [err, allDutys] = await to(
+    dutyModel.findAll({
+      raw: true
+    })
+  );
+  function convertSubdepartment(allDutys) {
+    const result = {};
+    for (const item of allDutys) {
+      if (item.subDepartment) {
+        if (result[item.department]) {
+          if (result[item.department].every(subItem => subItem.label !== item.subDepartment)) {
+            result[item.department].push({
+              label: item.subDepartment,
+              value: item.subDepartment
+            })
+          }
+        } else {
+          result[item.department] = []
+          result[item.department].push({
+            label: item.subDepartment,
+            value: item.subDepartment
+          })
+        }
+      }
+    }
+    return result;
+  }
+  const subDepartmentObj = convertSubdepartment(allDutys)
+  function convertDepartment(allDutys) {
+    const result = {};
+    for (const item of allDutys) {
+      if (result[item.department]) {
+        const obj = {
+          岗位名称: item.position,
+          对应职能: item.corrFunc
+        }
+        result[item.department].push({
+          label: item.position,
+          value: JSON.stringify(obj)
+        })
+      } else {
+        result[item.department] = []
+        const obj = {
+          岗位名称: item.position,
+          对应职能: item.corrFunc
+        }
+        result[item.department].push({
+          label: item.position,
+          value: JSON.stringify(obj)
+        })
+      }
+    }
+    return result;
+  }
+  const departmentObj = convertDepartment(allDutys)
+  function allDepartment(allDutys) {
+    const departmentSet = new Set()
+    for (let item of allDutys) {
+      departmentSet.add(item.department)
+    }
+    const departmentArr = [...departmentSet]
+    const departmentObjArr = departmentArr.map(item => {
+      return { value: item, label: item }
+    })
+    return departmentObjArr
+  }
+  const departmentObjArr = allDepartment(allDutys)
+  ctx.suc("查询成功", { subDepartmentObj, departmentObj, departmentObjArr });
+})
+
 module.exports = router.routes()
