@@ -21,6 +21,10 @@ const User = db.define(
         firstWenJuanAnswer: DataTypes.JSON,
         secondWenJuanQuestion: DataTypes.JSON,
         corrFunc: DataTypes.STRING,
+        canTest: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        }
     },
     {
         timestamps: true,

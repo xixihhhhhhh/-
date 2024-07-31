@@ -4,17 +4,47 @@ const {
 } = require("await-to-js")
 const router = new Router
 const historyModel = require("../model/EvaluateHistory");
+const userModel = require("../model/User")
 const { handleResult } = require("../utils");
 
 router.post('/add', async ctx => {
   const data = ctx.request.body
+  const { user_id } = data
 
-  const [err] = await to(
-    historyModel.create({
-      ...data
+  const [err1, user] = await to(
+    userModel.findOne({
+      where: {
+        id: user_id
+      }
     })
   );
-  handleResult(ctx, err, "添加成功", { success: true })
+  if (user.dataValues.canTest) {
+    const [err2, res] =  await to(
+      userModel.update({ canTest: false }, {
+        where: {
+          id: user_id,
+        },
+        raw: true
+      })
+    );
+    console.log(res, 'res')
+    const [err] = await to(
+      historyModel.create({
+        ...data
+      })
+    );
+  } else {
+    await to(
+      historyModel.update({ ...data }, {
+        where: {
+          user_id,
+        },
+        raw: true
+      })
+    );
+  }
+
+  handleResult(ctx, err1, "添加成功", { success: true })
 })
 
 router.post('/getAllEvaluateHistory', async ctx => {

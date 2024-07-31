@@ -121,6 +121,7 @@ router.post("/login", async ctx => {
             userId: newUser[0].id,
             name: newUser[0].name
         }
+        delete data.password
         const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
         if ((newUser[0].password + '') === (data.password + '')) {
             ctx.suc("登录成功!", { ...data, token })
@@ -225,6 +226,39 @@ router.post("/clearSecondWenjuan", async ctx => {
         ctx.err("添加失败", err);
     }
     ctx.suc("情况第二份问卷成功！", { success: true })
+})
+
+router.post("/setCanText", async ctx => {
+    const data = ctx.request.body;
+    const { user_id, canTest } = data
+    const [err] =  await to(
+        userModel.update({ canTest }, {
+          where: {
+            id: user_id,
+          },
+          raw: true
+        })
+      );
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("设置成功！", { success: true })
+})
+
+router.post("/getCanText", async ctx => {
+    const data = ctx.request.body;
+    const { user_id } = data
+    const [err, user] = await to(
+        userModel.findOne({
+          where: {
+            id: user_id
+          }
+        })
+      );
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("查询成功！", { canTest: user.dataValues.canTest })
 })
 
 module.exports = router.routes()
