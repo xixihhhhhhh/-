@@ -121,9 +121,9 @@ router.post("/login", async ctx => {
             userId: newUser[0].id,
             name: newUser[0].name
         }
-        const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
         if ((newUser[0].password + '') === (data.password + '')) {
             delete data.password
+            const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
             ctx.suc("登录成功!", { ...data, token })
         } else {
             ctx.err("密码错误！", err)
