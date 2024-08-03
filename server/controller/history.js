@@ -69,18 +69,6 @@ router.post('/getAllEvaluateHistory', async ctx => {
     })
   );
 
-  if (filteredObj.sortOrder !== '') {
-    if (filteredObj.sortOrder === '升序') {
-      allHistory.sort((a, b) => {
-        return new Date(a.finishTime) - new Date(b.finishTime);
-      });
-    } else {
-      allHistory.sort((a, b) => {
-        return new Date(b.finishTime) - new Date(a.finishTime);
-      });
-    }
-  }
-
   if (err) return ctx.err("操作失败", err);
   ctx.suc("查询成功", allHistory);
 });
@@ -109,22 +97,6 @@ router.post('/getPersonalEvaluateList', async ctx => {
       raw: true
     })
   );
-
-  if (filteredObj.sortOrder !== '') {
-    if (filteredObj.sortOrder === '升序') {
-      allHistory.sort((a, b) => {
-        const dateA = new Date(a.finishTime);
-        const dateB = new Date(b.finishTime);
-        return dateA - dateB;
-      });
-    } else {
-      allHistory.sort((a, b) => {
-        const dateA = new Date(a.finishTime);
-        const dateB = new Date(b.finishTime);
-        return dateB - dateA;
-      });
-    }
-  }
 
   if (err) return ctx.err("操作失败", err);
   ctx.suc("查询成功", allHistory);
