@@ -25,8 +25,11 @@ router.post('/getDuty', async ctx => {
   if (data.position) {
     where.position = data.position;
   }
+  if (data.subDepartment) {
+    where.subDepartment = data.subDepartment;
+  }
 
-  const [err, allDutys] = await to(
+  const [err, allDuty] = await to(
     dutyModel.findAll({
       where,
       raw: true
@@ -34,14 +37,14 @@ router.post('/getDuty', async ctx => {
   );
 
   if (err) return ctx.err("操作失败", err);
-  ctx.suc("查询成功", allDutys);
+  ctx.suc("查询成功", allDuty);
 });
 
 router.post('/deleteDuty', async ctx => {
   const data = ctx.request.body
   const { duty_id } = data
 
-  const [err, allDutys] = await to(
+  const [err, allDuty] = await to(
     dutyModel.destroy({
       where: { id: duty_id },
       raw: true
@@ -49,7 +52,7 @@ router.post('/deleteDuty', async ctx => {
   );
 
   if (err) return ctx.err("操作失败", err);
-  ctx.suc("删除成功", allDutys);
+  ctx.suc("删除成功", allDuty);
 });
 
 router.post('/updateDuty', async ctx => {
@@ -72,16 +75,19 @@ router.post('/updateDuty', async ctx => {
 router.post('/getAllDepartmentAndPosition', async ctx => {
   const departmentSet = new Set()
   const positionSet = new Set()
-  const [err, allDutys] = await to(
+  const subDepartmentSet = new Set()
+  const [err, allDuty] = await to(
     dutyModel.findAll({
       raw: true
     })
   );
-  for (let item of allDutys) {
+  for (let item of allDuty) {
     departmentSet.add(item.department)
+    subDepartmentSet.add(item.subDepartment)
     positionSet.add(item.position)
   }
   const departmentArr = [...departmentSet]
+  const subDepartmentArr = [...subDepartmentSet].filter(item => item !== '')
   const positionArr = [...positionSet]
   const departmentObj = departmentArr.map(item => {
     return { value: item }
@@ -89,18 +95,21 @@ router.post('/getAllDepartmentAndPosition', async ctx => {
   const positionObj = positionArr.map(item => {
     return { value: item }
   })
-  ctx.suc("查询成功", { allDepartment: departmentObj, allPosition: positionObj });
+  const subDepartmentObj = subDepartmentArr.map(item => {
+    return { value: item }
+  })
+  ctx.suc("查询成功", { allDepartment: departmentObj, allPosition: positionObj, allSubDepartment: subDepartmentObj });
 })
 
-router.post('/getEvaluteFormData', async ctx => {
-  const [err, allDutys] = await to(
+router.post('/getEvaluateFormData', async ctx => {
+  const [err, allDuty] = await to(
     dutyModel.findAll({
       raw: true
     })
   );
-  function convertSubdepartment(allDutys) {
+  function convertSubdepartment(allDuty) {
     const result = {};
-    for (const item of allDutys) {
+    for (const item of allDuty) {
       if (item.subDepartment) {
         if (result[item.department]) {
           if (result[item.department].every(subItem => subItem.label !== item.subDepartment)) {
@@ -120,10 +129,10 @@ router.post('/getEvaluteFormData', async ctx => {
     }
     return result;
   }
-  const subDepartmentObj = convertSubdepartment(allDutys)
-  function convertDepartment(allDutys) {
+  const subDepartmentObj = convertSubdepartment(allDuty)
+  function convertDepartment(allDuty) {
     const result = {};
-    for (const item of allDutys) {
+    for (const item of allDuty) {
       if (!item.subDepartment) {
         if (result[item.department]) {
           const obj = {
@@ -149,10 +158,10 @@ router.post('/getEvaluteFormData', async ctx => {
     }
     return result;
   }
-  const departmentObj = convertDepartment(allDutys)
-  function getSubPosition(allDutys) {
+  const departmentObj = convertDepartment(allDuty)
+  function getSubPosition(allDuty) {
     const result = {};
-    for (const item of allDutys) {
+    for (const item of allDuty) {
       if (item.subDepartment) {
         if (result[item.department + item.subDepartment]) {
           const obj = {
@@ -178,10 +187,10 @@ router.post('/getEvaluteFormData', async ctx => {
     }
     return result;
   }
-  const subPosition = getSubPosition(allDutys)
-  function allDepartment(allDutys) {
+  const subPosition = getSubPosition(allDuty)
+  function allDepartment(allDuty) {
     const departmentSet = new Set()
-    for (let item of allDutys) {
+    for (let item of allDuty) {
       departmentSet.add(item.department)
     }
     const departmentArr = [...departmentSet]
@@ -190,7 +199,7 @@ router.post('/getEvaluteFormData', async ctx => {
     })
     return departmentObjArr
   }
-  const departmentObjArr = allDepartment(allDutys)
+  const departmentObjArr = allDepartment(allDuty)
   ctx.suc("查询成功", { subDepartmentObj, departmentObj, departmentObjArr, subPosition });
 })
 

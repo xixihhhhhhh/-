@@ -60,6 +60,9 @@ router.post('/getAllEvaluateHistory', async ctx => {
   if (filteredObj.position) {
     where.position = filteredObj.position;
   }
+  if (filteredObj.subDepartment) {
+    where.subDepartment = filteredObj.subDepartment;
+  }
 
   // 使用过滤条件查询
   const [err, allHistory] = await to(

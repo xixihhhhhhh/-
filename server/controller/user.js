@@ -65,8 +65,8 @@ router.post("/register", async ctx => {
         data.roles = 'user'
     }
     const avatar = await getImgUrl()
+    console.log("🚀 ~ avatar:", avatar)
     data.avatar = avatar
-    const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
 
     if (await checkExistingUser('email', data.email)) {
         ctx.err("该邮箱已经被注册!");
@@ -86,18 +86,25 @@ router.post("/register", async ctx => {
             avatar
         })
     );
+    data = {
+        ...data,
+        userId: newUser.id,
+        name: newUser.name
+    }
+    const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
     newUser.dataValues.token = token
     if (err) {
-        ctx.err("添加失败", err);
+        ctx.err("注册失败", err);
         console.log('err', err);
     } else {
-        console.log('添加成功');
-        ctx.suc("添加成功", newUser);
+        console.log('注册成功');
+        ctx.suc("注册成功", newUser);
     }
 });
 
 router.post("/login", async ctx => {
     let data = ctx.request.body
+
     if (data.email === '20478048816@qq.com') {
         data.roles = 'admin'
     } else {
@@ -119,7 +126,8 @@ router.post("/login", async ctx => {
         data = {
             ...data,
             userId: newUser[0].id,
-            name: newUser[0].name
+            name: newUser[0].name,
+            avatar: newUser[0].avatar   
         }
         if ((newUser[0].password + '') === (data.password + '')) {
             delete data.password
@@ -247,6 +255,7 @@ router.post("/setCanText", async ctx => {
 
 router.post("/getCanText", async ctx => {
     const data = ctx.request.body;
+    console.log("🚀 ~ data:", data)
     const { user_id } = data
     const [err, user] = await to(
         userModel.findOne({
@@ -258,6 +267,7 @@ router.post("/getCanText", async ctx => {
     if (err) {
         ctx.err("添加失败", err);
     }
+    console.log(user, 'user')
     ctx.suc("查询成功！", { canTest: user.dataValues.canTest })
 })
 
