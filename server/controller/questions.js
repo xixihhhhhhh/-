@@ -14,12 +14,14 @@ router.post('/add', async ctx => {
   const competency = positionType[2]
   const quesData = data.quesData
   if (await checkExistingField(questionnaireModel, 'competency', competency)) {
-    const res = await questionnaireModel.update({ careerField, careerAdvantages, quesData }, {
-      where: {
-        competency
-      },
-      raw: true
-    })
+    const [_err, res] = await to(
+      questionnaireModel.update({ careerField, careerAdvantages, quesData }, {
+        where: {
+          competency
+        },
+        raw: true
+      })
+    )
     if (res.length > 0) {
       ctx.suc("更新成功", { success: true })
     }

@@ -65,7 +65,6 @@ router.post("/register", async ctx => {
         data.roles = 'user'
     }
     const avatar = await getImgUrl()
-    console.log("🚀 ~ avatar:", avatar)
     data.avatar = avatar
 
     if (await checkExistingUser('email', data.email)) {
@@ -127,7 +126,7 @@ router.post("/login", async ctx => {
             ...data,
             userId: newUser[0].id,
             name: newUser[0].name,
-            avatar: newUser[0].avatar   
+            avatar: newUser[0].avatar
         }
         if ((newUser[0].password + '') === (data.password + '')) {
             delete data.password
@@ -186,9 +185,9 @@ router.post("/getAllUsers", async ctx => {
 
 router.post("/relaxAssessment", async ctx => {
     const data = ctx.request.body;
-    const { email, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc } = data
+    const { email, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc, spendTime } = data
     const [err] = await to(
-        userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc }, {
+        userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc, spendTime }, {
             where: {
                 email,
             },
@@ -223,7 +222,7 @@ router.post("/clearSecondWenjuan", async ctx => {
     const data = ctx.request.body;
     const { email } = data
     const [err] = await to(
-        userModel.update({ hasUnFinish: false, firstWenJuanAnswer: [], secondWenJuanQuestion: [], corrFunc: '' }, {
+        userModel.update({ hasUnFinish: false, firstWenJuanAnswer: [], secondWenJuanQuestion: [], corrFunc: '', spendTime: 0 }, {
             where: {
                 email,
             },
@@ -233,7 +232,24 @@ router.post("/clearSecondWenjuan", async ctx => {
     if (err) {
         ctx.err("添加失败", err);
     }
-    ctx.suc("情况第二份问卷成功！", { success: true })
+    ctx.suc("清空第二份问卷成功！", { success: true })
+})
+
+router.post("/continueAnswer", async ctx => {
+    const data = ctx.request.body;
+    const { email, spendTime } = data
+    const [err] = await to(
+        userModel.update({ spendTime }, {
+            where: {
+                email,
+            },
+            raw: true
+        })
+    )
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("继续问卷成功！", { success: true })
 })
 
 router.post("/setCanText", async ctx => {
@@ -255,7 +271,6 @@ router.post("/setCanText", async ctx => {
 
 router.post("/getCanText", async ctx => {
     const data = ctx.request.body;
-    console.log("🚀 ~ data:", data)
     const { user_id } = data
     const [err, user] = await to(
         userModel.findOne({
@@ -267,7 +282,6 @@ router.post("/getCanText", async ctx => {
     if (err) {
         ctx.err("添加失败", err);
     }
-    console.log(user, 'user')
     ctx.suc("查询成功！", { canTest: user.dataValues.canTest })
 })
 

@@ -58,17 +58,16 @@ router.post('/deleteDuty', async ctx => {
 router.post('/updateDuty', async ctx => {
   const data = ctx.request.body
   const { department, subDepartment, position, corrFunc } = data
-  console.log("🚀 ~ data:", data)
 
-  const res = await dutyModel.update({ department, subDepartment, position, corrFunc }, {
-    where: {
-      id: data.id
-    },
-    raw: true
-  })
-  console.log("🚀 ~ res:", res)
-
-  // if (err) return ctx.err("操作失败", err);
+  const [err, _duty] = await to(
+    dutyModel.update({ department, subDepartment, position, corrFunc }, {
+      where: {
+        id: data.id
+      },
+      raw: true
+    })
+  )
+  if (err) return ctx.err("更新失败", err);
   ctx.suc("更新成功", {});
 });
 
@@ -137,7 +136,7 @@ router.post('/getEvaluateFormData', async ctx => {
         if (result[item.department]) {
           const obj = {
             岗位名称: item.position,
-            对应职能: item.corrFunc
+            岗位职能: item.corrFunc
           }
           result[item.department].push({
             label: item.position,
@@ -147,7 +146,7 @@ router.post('/getEvaluateFormData', async ctx => {
           result[item.department] = []
           const obj = {
             岗位名称: item.position,
-            对应职能: item.corrFunc
+            岗位职能: item.corrFunc
           }
           result[item.department].push({
             label: item.position,
@@ -166,7 +165,7 @@ router.post('/getEvaluateFormData', async ctx => {
         if (result[item.department + item.subDepartment]) {
           const obj = {
             岗位名称: item.position,
-            对应职能: item.corrFunc
+            岗位职能: item.corrFunc
           }
           result[item.department + item.subDepartment].push({
             label: item.position,
@@ -176,7 +175,7 @@ router.post('/getEvaluateFormData', async ctx => {
           result[item.department + item.subDepartment] = []
           const obj = {
             岗位名称: item.position,
-            对应职能: item.corrFunc
+            岗位职能: item.corrFunc
           }
           result[item.department + item.subDepartment].push({
             label: item.position,

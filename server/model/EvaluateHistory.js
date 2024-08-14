@@ -21,7 +21,8 @@ const chatFriend = db.define(
     competencyObj: DataTypes.JSON,
     careerAdvantagesObj: DataTypes.JSON,
     careerFieldObj: DataTypes.JSON,
-    corrFunc: DataTypes.STRING
+    corrFunc: DataTypes.STRING,
+    spendTime: DataTypes.INTEGER,
   },
   {
     timestamps: true,

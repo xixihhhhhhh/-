@@ -24,7 +24,8 @@ const User = db.define(
         canTest: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }
+        },
+        spendTime: DataTypes.INTEGER,
     },
     {
         timestamps: true,

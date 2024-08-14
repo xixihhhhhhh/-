@@ -11,34 +11,47 @@ router.post('/add', async ctx => {
   const data = ctx.request.body
   const { user_id } = data
 
-  const [err1, user] = await to(
+  const [err, user] = await to(
     userModel.findOne({
       where: {
         id: user_id
       }
     })
   );
-  if (user.dataValues.canTest) {
-    const [err2, res] = await to(
-      userModel.update({ canTest: false }, {
-        where: {
-          id: user_id,
-        },
-        raw: true
-      })
-    );
-    const [err] = await to(
-      historyModel.create({
-        ...data
-      })
-    );
-  } else {
+
+  // 拿到上半份问卷的答题时间
+  const lastHalfSpendTime = user.dataValues.spendTime
+  data.spendTime = data.spendTime + lastHalfSpendTime
+  await to(
+    userModel.update({ canTest: false }, {
+      where: {
+        id: user_id,
+      },
+      raw: true
+    })
+  );
+
+  const [err1, history] = await to(
+    historyModel.findOne({
+      where: {
+        user_id
+      }
+    })
+  );
+
+  if (history) {
     await to(
       historyModel.update({ ...data }, {
         where: {
           user_id,
         },
         raw: true
+      })
+    );
+  } else {
+    await to(
+      historyModel.create({
+        ...data
       })
     );
   }

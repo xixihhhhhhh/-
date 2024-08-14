@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +20,7 @@
     "koa2-cors": "^2.0.6",
     "moment": "^2.29.4",
     "mysql2": "^3.5.2",
-    "nodemon": "^3.0.1",
+    "nodemon": "3.1.14",
     "pet-breed-names": "1.0.2",
     "sequelize": "^6.32.1"
   },
