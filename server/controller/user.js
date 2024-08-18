@@ -59,7 +59,7 @@ router.post("/getUserInfoById", async ctx => {
 router.post("/register", async ctx => {
     let data = ctx.request.body;
 
-    if (data.email === '20478048816@qq.com') {
+    if (data.phone === '19137789318') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
@@ -67,8 +67,8 @@ router.post("/register", async ctx => {
     const avatar = await getImgUrl()
     data.avatar = avatar
 
-    if (await checkExistingUser('email', data.email)) {
-        ctx.err("该邮箱已经被注册!");
+    if (await checkExistingUser('phone', data.phone)) {
+        ctx.err("该手机号已经被注册!");
         return;
     }
     if (await checkExistingUser('name', data.name)) {
@@ -78,7 +78,7 @@ router.post("/register", async ctx => {
     // 如果不存在相同邮箱或者用户名的用户，创建一个新的用户，并将其保存到数据库中
     const [err, newUser] = await to(
         userModel.create({
-            email: data.email,
+            phone: data.phone,
             name: data.name,
             password: data.password,
             roles: data.roles,
@@ -104,7 +104,7 @@ router.post("/register", async ctx => {
 router.post("/login", async ctx => {
     let data = ctx.request.body
 
-    if (data.email === '20478048816@qq.com') {
+    if (data.phone === '19137789318') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
@@ -112,11 +112,16 @@ router.post("/login", async ctx => {
     const [err, newUser] = await to(
         userModel.findAll({
             where: {
-                email: data.email
+                phone: data.phone
             },
             raw: true
         })
     )
+    console.log("🚀 ~ newUser:", newUser)
+    if (!newUser) {
+        ctx.err("登录失败", err)
+        return
+    }
     const len = newUser.length
     if (!len) {
         ctx.err("登录失败", err)
@@ -147,21 +152,16 @@ router.post("/resetPassword", async ctx => {
     const [err, succ] = await to(
         userModel.update({ password: data.password }, {
             where: {
-                email: data.email,
+                phone: data.phone,
             },
             raw: true
         })
     )
     if (err) {
-        ctx.err("修改密码失败", { success: false })
+        ctx.err("修改手机号失败！", { success: false })
         console.log('err', err)
     } else {
-        console.log(succ)
-        if (succ[0] === 1) {
-            ctx.suc("修改密码成功!", { success: true })
-        } else {
-            ctx.err("邮箱未注册!", { success: false })
-        }
+        ctx.suc("修改密码成功!", { success: true })
     }
 })
 
@@ -185,11 +185,11 @@ router.post("/getAllUsers", async ctx => {
 
 router.post("/relaxAssessment", async ctx => {
     const data = ctx.request.body;
-    const { email, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc, spendTime } = data
+    const { phone, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc, spendTime } = data
     const [err] = await to(
         userModel.update({ hasUnFinish: true, firstWenJuanAnswer, secondWenJuanQuestion, corrFunc, spendTime }, {
             where: {
-                email,
+                phone,
             },
             raw: true
         })
@@ -202,11 +202,11 @@ router.post("/relaxAssessment", async ctx => {
 
 router.post("/getSecondWenjuan", async ctx => {
     const data = ctx.request.body;
-    const { email } = data
+    const { phone } = data
     const [err, user] = await to(
         userModel.findAll({
             where: {
-                email
+                phone
             },
             raw: true
         })
@@ -220,11 +220,11 @@ router.post("/getSecondWenjuan", async ctx => {
 
 router.post("/clearSecondWenjuan", async ctx => {
     const data = ctx.request.body;
-    const { email } = data
+    const { phone } = data
     const [err] = await to(
         userModel.update({ hasUnFinish: false, firstWenJuanAnswer: [], secondWenJuanQuestion: [], corrFunc: '', spendTime: 0 }, {
             where: {
-                email,
+                phone,
             },
             raw: true
         })
@@ -237,11 +237,11 @@ router.post("/clearSecondWenjuan", async ctx => {
 
 router.post("/continueAnswer", async ctx => {
     const data = ctx.request.body;
-    const { email, spendTime } = data
+    const { phone, spendTime } = data
     const [err] = await to(
         userModel.update({ spendTime }, {
             where: {
-                email,
+                phone,
             },
             raw: true
         })

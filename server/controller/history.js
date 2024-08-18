@@ -673,8 +673,8 @@ router.post('/getMatchedUsers', async ctx => {
   const users = []
   for (let i = 0; i < allHistory.length; i++) {
     const { competencyObj, name, user_id, department, subDepartment, position, finishTime, reportTruth } = allHistory[i]
-    const scroes = pushArr(competencyObj)
-    const mathcSocre = getMatchScores(scroes, result[corrFunc])
+    const scores = pushArr(competencyObj)
+    const matchScore = getMatchScores(scores, result[corrFunc])
     const [err1, user] = await to(
       userModel.findOne({
         where: {
@@ -683,9 +683,9 @@ router.post('/getMatchedUsers', async ctx => {
       })
     );
     users.push({
-      match: mathcSocre + '%',
+      match: matchScore + '%',
       name,
-      email: user.dataValues.email,
+      phone: user.dataValues.phone,
       department,
       subDepartment,
       position,
@@ -695,11 +695,11 @@ router.post('/getMatchedUsers', async ctx => {
   }
   if (sortOption === '降序') {
     users.sort((a, b) => {
-      return parseFloat(b.mathcSocre) - parseFloat(a.mathcSocre);
+      return parseFloat(b.matchScore) - parseFloat(a.matchScore);
     });
   } else {
     users.sort((a, b) => {
-      return parseFloat(a.mathcSocre) - parseFloat(b.mathcSocre);
+      return parseFloat(a.matchScore) - parseFloat(b.matchScore);
     });
   }
   if (err) return ctx.err("操作失败", err);

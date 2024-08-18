@@ -12,8 +12,8 @@ const User = db.define(
             autoIncrement: true
         },
         name: DataTypes.STRING,
-        password: DataTypes.INTEGER,
-        email: DataTypes.STRING,
+        password: DataTypes.STRING,
+        phone: DataTypes.STRING,
         sex: DataTypes.BOOLEAN,
         roles: DataTypes.STRING,
         avatar: DataTypes.STRING,
