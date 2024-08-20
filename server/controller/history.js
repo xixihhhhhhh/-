@@ -703,7 +703,7 @@ router.post('/getMatchedUsers', async ctx => {
     });
   }
   if (err) return ctx.err("操作失败", err);
-  ctx.suc("删除成功", users);
+  ctx.suc("查询成功", users);
 });
 
 module.exports = router.routes() 

@@ -103,43 +103,38 @@ router.post("/register", async ctx => {
 
 router.post("/login", async ctx => {
     let data = ctx.request.body
+    const { phone, password } = data
 
-    if (data.phone === '19137789318') {
+    if (phone === '19137789318') {
         data.roles = 'admin'
     } else {
         data.roles = 'user'
     }
-    const [err, newUser] = await to(
-        userModel.findAll({
+    const [err, user] = await to(
+        userModel.findOne({
             where: {
-                phone: data.phone
+                phone
             },
             raw: true
         })
     )
-    console.log("🚀 ~ newUser:", newUser)
-    if (!newUser) {
-        ctx.err("登录失败", err)
+    if (!user) {
+        ctx.err("手机号未注册!", err)
         return
     }
-    const len = newUser.length
-    if (!len) {
-        ctx.err("登录失败", err)
-        console.log('err', err)
+    const { id, name, avatar } = user
+    data = {
+        ...data,
+        userId: id,
+        name,
+        avatar,
+    }
+    if ((user.password + '') === (password + '')) {
+        delete data.password
+        const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
+        ctx.suc("登录成功!", { ...data, token })
     } else {
-        data = {
-            ...data,
-            userId: newUser[0].id,
-            name: newUser[0].name,
-            avatar: newUser[0].avatar
-        }
-        if ((newUser[0].password + '') === (data.password + '')) {
-            delete data.password
-            const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
-            ctx.suc("登录成功!", { ...data, token })
-        } else {
-            ctx.err("密码错误！", err)
-        }
+        ctx.err("密码错误！", err)
     }
 })
 
