@@ -672,7 +672,7 @@ router.post('/getMatchedUsers', async ctx => {
 
   const users = []
   for (let i = 0; i < allHistory.length; i++) {
-    const { competencyObj, name, user_id, department, subDepartment, position, finishTime, reportTruth } = allHistory[i]
+    const { competencyObj, name, user_id, department, subDepartment, position, finishTime, reportTruth, spendTime } = allHistory[i]
     const scores = pushArr(competencyObj)
     const matchScore = getMatchScores(scores, result[corrFunc])
     const [err1, user] = await to(
@@ -691,6 +691,7 @@ router.post('/getMatchedUsers', async ctx => {
       position,
       finishTime,
       reportTruth,
+      spendTime
     })
   }
   if (sortOption === '降序') {
