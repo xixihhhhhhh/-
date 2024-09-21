@@ -2,7 +2,7 @@ const Router = require("@koa/router")
 const {
   default: to
 } = require("await-to-js")
-const router = new Router
+const router = new Router()
 const dutyModel = require("../model/Duty");
 const { handleResult } = require("../utils");
 

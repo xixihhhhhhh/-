@@ -2,7 +2,7 @@ const Router = require("@koa/router")
 const {
     default: to
 } = require("await-to-js")
-const router = new Router
+const router = new Router()
 const userModel = require("../model/User")
 const jwt = require('jsonwebtoken')
 
@@ -58,9 +58,11 @@ router.post("/getUserInfoById", async ctx => {
 
 router.post("/register", async ctx => {
     let data = ctx.request.body;
+    let homePath
 
     if (data.phone === '19137789318') {
         data.roles = 'admin'
+        homePath = '/dashboard'
     } else {
         data.roles = 'user'
     }
@@ -88,7 +90,8 @@ router.post("/register", async ctx => {
     data = {
         ...data,
         userId: newUser.id,
-        name: newUser.name
+        name: newUser.name,
+        homePath
     }
     const token = jwt.sign({ data }, 'token', { expiresIn: '7d' });
     newUser.dataValues.token = token
@@ -104,9 +107,11 @@ router.post("/register", async ctx => {
 router.post("/login", async ctx => {
     let data = ctx.request.body
     const { phone, password } = data
+    let homePath
 
     if (phone === '19137789318') {
         data.roles = 'admin'
+        homePath = '/dashboard'
     } else {
         data.roles = 'user'
     }
@@ -128,6 +133,7 @@ router.post("/login", async ctx => {
         userId: id,
         name,
         avatar,
+        homePath
     }
     if ((user.password + '') === (password + '')) {
         delete data.password
@@ -144,8 +150,9 @@ router.post("/logout", async ctx => {
 
 router.post("/resetPassword", async ctx => {
     let data = ctx.request.body
+    const { password } = data
     const [err, succ] = await to(
-        userModel.update({ password: data.password }, {
+        userModel.update({ password }, {
             where: {
                 phone: data.phone,
             },
@@ -250,7 +257,7 @@ router.post("/continueAnswer", async ctx => {
 router.post("/setCanText", async ctx => {
     const data = ctx.request.body;
     const { user_id, canTest } = data
-    const [err] = await to(
+    const [err, user] = await to(
         userModel.update({ canTest }, {
             where: {
                 id: user_id,
@@ -278,6 +285,22 @@ router.post("/getCanText", async ctx => {
         ctx.err("添加失败", err);
     }
     ctx.suc("查询成功！", { canTest: user.dataValues.canTest })
+})
+
+router.post("/getIsProfileCompleted", async ctx => {
+    const data = ctx.request.body;
+    const { user_id } = data
+    const [err, user] = await to(
+        userModel.findOne({
+            where: {
+                id: user_id
+            }
+        })
+    );
+    if (err) {
+        ctx.err("添加失败", err);
+    }
+    ctx.suc("查询成功！", { isProfileCompleted: user.dataValues.isProfileCompleted })
 })
 
 module.exports = router.routes()

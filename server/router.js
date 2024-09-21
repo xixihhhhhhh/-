@@ -8,5 +8,6 @@ router.use('/question', require("./controller/questions"))
 router.use('/comment', require("./controller/comment"))
 router.use('/evaluateHistory', require("./controller/history"))
 router.use('/duty', require("./controller/duty"))
+router.use('/personInfo', require("./controller/personInfo"))
 
 module.exports = router.routes()

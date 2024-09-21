@@ -20,7 +20,7 @@
     "koa2-cors": "^2.0.6",
     "moment": "^2.29.4",
     "mysql2": "^3.5.2",
-    "nodemon": "3.1.14",
+    "nodemon": "3.1.4",
     "pet-breed-names": "1.0.2",
     "sequelize": "^6.32.1"
   },

@@ -26,6 +26,7 @@ const User = db.define(
             defaultValue: true
         },
         spendTime: DataTypes.INTEGER,
+        isProfileCompleted: DataTypes.BOOLEAN,
     },
     {
         timestamps: true,

@@ -2,7 +2,7 @@ const Router = require("@koa/router")
 const {
   default: to
 } = require("await-to-js")
-const router = new Router
+const router = new Router()
 const questionnaireModel = require("../model/Questions");
 const { checkExistingField, handleResult, randomArray } = require("../utils");
 
