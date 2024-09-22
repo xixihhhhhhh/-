@@ -188,9 +188,50 @@ router.post('/getPersonalEvaluateList', async ctx => {
       raw: true
     })
   );
+  const all = []
+  for (let i = 0; i < allHistory.length; i++) {
+    const { name, department, position, subDepartment, finishTime, user_id, spendTime } = allHistory[i]
+    const res = {}
+    res.user_id = user_id
+    res.name = name
+    res.department = department
+    res.position = position
+    res.subDepartment = subDepartment
+    res.finishTime = finishTime
+    res.spendTime = spendTime
+    const [err1, personInfo] = await to(personInfoModel.findOne({
+      where: {
+        userId: user_id
+      }
+    }))
+    if (personInfo) {
+      const { personMsg, annual, professional } = personInfo
+      if (professional?.length) {
+        const levelMap = {
+          '一级': 4,
+          '二级': 3,
+          '三级': 2,
+          '四级': 1,
+          '五级': 0,
+        }
+        const reverseLevelMap = ['五级', '四级', '三级', '二级', '一级']
+        const levelArr = professional.map(item => levelMap[item.level])
+        const maxLevel = Math.max(...levelArr)
+        res.professional = reverseLevelMap[maxLevel]
+      }
+      const { positionLevel, tenure, educationalBackground } = personMsg
+      const { excellentTimes, beingCompetentTimes, basicBeingCompetentTimes, incompetentTimes } = annual
+      res.annual = `${excellentTimes}次优秀 ${beingCompetentTimes}次称职 ${basicBeingCompetentTimes}次基本称职 ${incompetentTimes}次不称职`
+      res.positionLevel = positionLevel
+      res.tenure = tenure + '年'
+      res.educationalBackground = educationalBackground
+    }
+
+    all.push(res)
+  }
 
   if (err) return ctx.err("操作失败", err);
-  ctx.suc("查询成功", allHistory);
+  ctx.suc("查询成功", all);
 });
 
 router.post('/deleteEvaluate', async ctx => {
