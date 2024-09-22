@@ -95,14 +95,9 @@ router.post('/getAllEvaluateHistory', async ctx => {
   const all = []
   for (let i = 0; i < allHistory.length; i++) {
     const { name, department, position, subDepartment, finishTime, user_id, spendTime } = allHistory[i]
-    const res = {}
-    res.user_id = user_id
-    res.name = name
-    res.department = department
-    res.position = position
-    res.subDepartment = subDepartment
-    res.finishTime = finishTime
-    res.spendTime = spendTime
+    const res = {
+      ...allHistory[i]
+    }
     const [err1, personInfo] = await to(personInfoModel.findOne({
       where: {
         userId: user_id
@@ -191,14 +186,9 @@ router.post('/getPersonalEvaluateList', async ctx => {
   const all = []
   for (let i = 0; i < allHistory.length; i++) {
     const { name, department, position, subDepartment, finishTime, user_id, spendTime } = allHistory[i]
-    const res = {}
-    res.user_id = user_id
-    res.name = name
-    res.department = department
-    res.position = position
-    res.subDepartment = subDepartment
-    res.finishTime = finishTime
-    res.spendTime = spendTime
+    const res = {
+      ...allHistory[i]
+    }
     const [err1, personInfo] = await to(personInfoModel.findOne({
       where: {
         userId: user_id
