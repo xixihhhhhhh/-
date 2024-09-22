@@ -130,7 +130,7 @@ router.post('/getAllEvaluateHistory', async ctx => {
       if (positionLevel < filterPositionLevel) {
         continue
       }
-      if (filterTenure < tenure) {
+      if (tenure < filterTenure) {
         continue
       }
       const { excellentTimes, beingCompetentTimes, basicBeingCompetentTimes, incompetentTimes } = annual
