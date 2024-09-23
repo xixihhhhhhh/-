@@ -5,7 +5,6 @@ const router = new Router()
 //用户获取token等路由
 router.use('/user', require("./controller/user"))
 router.use('/question', require("./controller/questions"))
-router.use('/comment', require("./controller/comment"))
 router.use('/evaluateHistory', require("./controller/history"))
 router.use('/duty', require("./controller/duty"))
 router.use('/personInfo', require("./controller/personInfo"))

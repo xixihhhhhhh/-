@@ -94,7 +94,7 @@ router.post('/getAllEvaluateHistory', async ctx => {
   );
   const all = []
   for (let i = 0; i < allHistory.length; i++) {
-    const { name, department, position, subDepartment, finishTime, user_id, spendTime } = allHistory[i]
+    const { user_id } = allHistory[i]
     const res = {
       ...allHistory[i]
     }
@@ -127,23 +127,12 @@ router.post('/getAllEvaluateHistory', async ctx => {
         res.professional = reverseLevelMap[maxLevel]
       }
       const { positionLevel, tenure, educationalBackground } = personMsg
-      if (positionLevel < filterPositionLevel) {
-        continue
-      }
-      if (tenure < filterTenure) {
+      if (positionLevel < filterPositionLevel || tenure < filterTenure) {
         continue
       }
       const { excellentTimes, beingCompetentTimes, basicBeingCompetentTimes, incompetentTimes } = annual
-      if (excellentTimes < filterExcellentTimes) {
-        continue
-      }
-      if (beingCompetentTimes < filterBeingCompetentTimes) {
-        continue
-      }
-      if (basicBeingCompetentTimes < filterBasicBeingCompetentTimes) {
-        continue
-      }
-      if (incompetentTimes < filterIncompetentTimes) {
+      if (excellentTimes < filterExcellentTimes || beingCompetentTimes < filterBeingCompetentTimes
+        || basicBeingCompetentTimes < filterBasicBeingCompetentTimes || incompetentTimes < filterIncompetentTimes) {
         continue
       }
       res.annual = `${excellentTimes}次优秀 ${beingCompetentTimes}次称职 ${basicBeingCompetentTimes}次基本称职 ${incompetentTimes}次不称职`
@@ -158,6 +147,17 @@ router.post('/getAllEvaluateHistory', async ctx => {
   if (err) return ctx.err("操作失败", err);
   ctx.suc("查询成功", all);
 });
+
+router.post('/getEvaluateHistoryLength', async ctx => {
+  const [err, allHistory] = await to(
+    historyModel.findAll({
+      raw: true
+    })
+  );
+
+  if (err) return ctx.err("操作失败", err);
+  ctx.suc("查询成功", { length: allHistory.length });
+})
 
 router.post('/getPersonalEvaluateList', async ctx => {
   const data = ctx.request.body;
@@ -185,7 +185,7 @@ router.post('/getPersonalEvaluateList', async ctx => {
   );
   const all = []
   for (let i = 0; i < allHistory.length; i++) {
-    const { name, department, position, subDepartment, finishTime, user_id, spendTime } = allHistory[i]
+    const { user_id } = allHistory[i]
     const res = {
       ...allHistory[i]
     }
