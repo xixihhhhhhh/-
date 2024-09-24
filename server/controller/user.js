@@ -45,7 +45,7 @@ router.get("/getUserInfo", ctx => {
 router.post("/getUserInfoById", async ctx => {
     const data = ctx.request.body
     const [err, user] = await to(
-        userModel.findAll({
+        userModel.findOne({
             where: {
                 id: data.user_id
             },
@@ -53,7 +53,8 @@ router.post("/getUserInfoById", async ctx => {
         })
     )
     if (err) return
-    ctx.suc("", user[0])
+    delete user.password
+    ctx.suc("", user)
 })
 
 router.post("/register", async ctx => {

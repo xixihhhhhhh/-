@@ -9,8 +9,6 @@ const userModel = require("../model/User")
 router.post('/setPersonMsg', async ctx => {
   let data = ctx.request.body
   const { userId, personMsg, career, work, borrow, rewards, professional, annual } = data
-  console.log("🚀 ~ userId:", userId)
-  console.log("🚀 ~ annual:", annual)
   const [err, PersonInfo] = await to(
     personInfoModel.findOne({
       raw: true,
@@ -46,11 +44,11 @@ router.post('/setPersonMsg', async ctx => {
       raw: true
     })
     if (err1) {
-      ctx.err("添加失败", { success: false });
+      ctx.err("设置失败", { success: false });
       console.log('err', err1);
     } else {
       console.log('添加成功');
-      ctx.suc("添加成功", { success: true });
+      ctx.suc("设置成功", { success: true });
     }
   }
 })
