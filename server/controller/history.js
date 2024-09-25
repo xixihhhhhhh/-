@@ -131,8 +131,16 @@ router.post('/getAllEvaluateHistory', async ctx => {
         continue
       }
       const { excellentTimes, beingCompetentTimes, basicBeingCompetentTimes, incompetentTimes } = annual
-      if (excellentTimes < filterExcellentTimes || beingCompetentTimes < filterBeingCompetentTimes
-        || basicBeingCompetentTimes < filterBasicBeingCompetentTimes || incompetentTimes < filterIncompetentTimes) {
+      if (filterExcellentTimes && filterExcellentTimes !== excellentTimes) {
+        continue
+      }
+      if (filterBeingCompetentTimes && filterBeingCompetentTimes !== beingCompetentTimes) {
+        continue
+      }
+      if (filterBasicBeingCompetentTimes && filterBasicBeingCompetentTimes !== basicBeingCompetentTimes) {
+        continue
+      }
+      if (filterIncompetentTimes && incompetentTimes) {
         continue
       }
       res.annual = `${excellentTimes}次优秀 ${beingCompetentTimes}次称职 ${basicBeingCompetentTimes}次基本称职 ${incompetentTimes}次不称职`
