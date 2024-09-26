@@ -70,7 +70,8 @@ router.post('/getAllEvaluateHistory', async ctx => {
   const {
     department, position, subDepartment, positionLevel: filterPositionLevel, tenure: filterTenure, professional: filterProfessional,
     excellentTimes: filterExcellentTimes, beingCompetentTimes: filterBeingCompetentTimes,
-    basicBeingCompetentTimes: filterBasicBeingCompetentTimes, incompetentTimes: filterIncompetentTimes
+    basicBeingCompetentTimes: filterBasicBeingCompetentTimes, incompetentTimes: filterIncompetentTimes,
+    educationalBackground: filterEducationalBackground
   } = filteredObj
 
   // 构建过滤条件
@@ -127,7 +128,13 @@ router.post('/getAllEvaluateHistory', async ctx => {
         res.professional = reverseLevelMap[maxLevel]
       }
       const { positionLevel, tenure, educationalBackground } = personMsg
-      if (positionLevel < filterPositionLevel || tenure < filterTenure) {
+      if (filterPositionLevel && Number(positionLevel) !== filterPositionLevel) {
+        continue
+      }
+      if (filterTenure && Number(tenure) !== filterTenure) {
+        continue
+      }
+      if (filterEducationalBackground && filterEducationalBackground !== educationalBackground) {
         continue
       }
       const { excellentTimes, beingCompetentTimes, basicBeingCompetentTimes, incompetentTimes } = annual
