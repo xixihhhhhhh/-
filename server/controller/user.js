@@ -4,6 +4,7 @@ const {
 } = require("await-to-js")
 const router = new Router()
 const userModel = require("../model/User")
+const answerModel = require("../model/Answer")
 const jwt = require('jsonwebtoken')
 
 const { getImgUrl, isUserCreatedThisMonth } = require("../utils");
@@ -124,6 +125,7 @@ router.post("/login", async ctx => {
             raw: true
         })
     )
+    console.log("🚀 ~ user:", user)
     if (!user) {
         ctx.err("手机号未注册!", err)
         return
@@ -151,11 +153,11 @@ router.post("/logout", async ctx => {
 
 router.post("/resetPassword", async ctx => {
     let data = ctx.request.body
-    const { password } = data
+    const { password, phone } = data
     const [err, succ] = await to(
         userModel.update({ password }, {
             where: {
-                phone: data.phone,
+                phone,
             },
             raw: true
         })
@@ -302,6 +304,62 @@ router.post("/getIsProfileCompleted", async ctx => {
         ctx.err("添加失败", err);
     }
     ctx.suc("查询成功！", { isProfileCompleted: user.dataValues.isProfileCompleted })
+})
+
+router.post("/updatePassword", async ctx => {
+    const { phone, newPassword } = ctx.request.body;
+    const [err, res] = await to(
+        userModel.update({ password: newPassword }, {
+            where: {
+                phone
+            }
+        })
+    );
+    console.log("🚀 ~ res:", res)
+    if (err) {
+        ctx.err("修改密码失败!", err);
+    }
+    ctx.suc("修改密码成功！", { msg: "修改密码成功！" })
+})
+
+router.post("/getSecurityQuestions", async ctx => {
+    const { phone } = ctx.request.body;
+    console.log("🚀 ~ phone:", phone)
+
+    const [err, res] = await to(
+        answerModel.findOne({
+            where: {
+                phone
+            }
+        })
+    );
+    console.log("🚀 ~ res:", res)
+    ctx.suc("修改密码成功！", res)
+})
+
+router.post("/setSecurityQuestions", async ctx => {
+    const { phone, question1, question2, question3, answer1, answer2, answer3 } = ctx.request.body;
+
+    const [err, res] = await to(
+        answerModel.findOne({
+            where: {
+                phone
+            }
+        })
+    );
+
+    if (res) {
+        console.log("🚀 ~ res:", res)
+        answerModel.update({ question1, question2, question3, answer1, answer2, answer3 }, {
+            where: { phone },
+            raw: true
+        })
+    } else {
+        answerModel.create({
+            phone, question1, question2, question3, answer1, answer2, answer3
+        })
+    }
+    ctx.suc("设置安全问题成功！")
 })
 
 module.exports = router.routes()
