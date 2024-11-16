@@ -5,6 +5,7 @@ const {
 const router = new Router()
 const personInfoModel = require("../model/PersonInfo")
 const userModel = require("../model/User")
+const answerModel = require("../model/Answer")
 
 router.post('/setPersonMsg', async ctx => {
   let data = ctx.request.body
@@ -68,6 +69,38 @@ router.post('/getPersonMsg', async ctx => {
     console.log('err', err);
   } else {
     ctx.suc("添加成功", personInfo);
+  }
+})
+
+router.post('/getPersonHasSetPassQues', async ctx => {
+  let data = ctx.request.body
+  const { userId } = data
+  console.log("🚀 ~ userId:", userId)
+  const [err, userInfo] = await to(
+    userModel.findOne({
+      where: {
+        id: userId
+      }
+    })
+  )
+  if (err) {
+    ctx.err("查询失败！", err)
+  }
+  const phone = userInfo.dataValues.phone
+  const [err1, answerInfo] = await to(
+    answerModel.findOne({
+      where: {
+        phone
+      }
+    })
+  )
+  if (err1) {
+    ctx.err("查询失败！", err)
+  }
+  if (answerInfo) {
+    ctx.suc("查询成功!", { success: true });
+  } else {
+    ctx.suc("查询成功!", { success: false });
   }
 })
 

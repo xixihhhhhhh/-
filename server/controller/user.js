@@ -67,6 +67,7 @@ router.post("/register", async ctx => {
         homePath = '/dashboard'
     } else {
         data.roles = 'user'
+        homePath = '/findPasswordUser'
     }
     const avatar = await getImgUrl()
     data.avatar = avatar
@@ -116,6 +117,7 @@ router.post("/login", async ctx => {
         homePath = '/dashboard'
     } else {
         data.roles = 'user'
+        homePath = '/findPasswordUser'
     }
     const [err, user] = await to(
         userModel.findOne({

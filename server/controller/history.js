@@ -93,7 +93,7 @@ router.post('/getAllEvaluateHistory', async ctx => {
       raw: true
     })
   );
-  const all = []
+  let all = []
   for (let i = 0; i < allHistory.length; i++) {
     const { user_id } = allHistory[i]
     const res = {
@@ -158,7 +158,9 @@ router.post('/getAllEvaluateHistory', async ctx => {
 
     all.push(res)
   }
-
+  all = all.sort((a, b) => {
+    return new Date(b.finishTime).getTime() - new Date(a.finishTime).getTime();
+  });
   if (err) return ctx.err("操作失败", err);
   ctx.suc("查询成功", all);
 });
@@ -342,11 +344,11 @@ router.post('/getMatchedUsers', async ctx => {
   }
   if (sortOption === '降序') {
     users.sort((a, b) => {
-      return parseFloat(b.matchScore) - parseFloat(a.matchScore);
+      return parseFloat(a.matchScore) - parseFloat(b.matchScore);
     });
   } else {
     users.sort((a, b) => {
-      return parseFloat(a.matchScore) - parseFloat(b.matchScore);
+      return parseFloat(b.matchScore) - parseFloat(a.matchScore);
     });
   }
   if (err) return ctx.err("操作失败", err);
